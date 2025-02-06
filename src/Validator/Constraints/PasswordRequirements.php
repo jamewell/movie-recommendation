@@ -9,10 +9,6 @@ use Symfony\Component\Validator\Constraints\Regex;
 
 class PasswordRequirements extends Compound
 {
-
-    /**
-     * @inheritDoc
-     */
     protected function getConstraints(array $options): array
     {
         return [
