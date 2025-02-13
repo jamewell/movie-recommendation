@@ -1,0 +1,13 @@
+name: minio
+repository: ddev/ddev-minio
+version: v2.0.3
+install_date: "2025-02-13T10:39:05+01:00"
+project_files:
+    - .minioImageBuild/Dockerfile
+    - .minioImageBuild/ddev-entrypoint.sh
+    - commands/host/minio
+    - commands/minio/mc
+    - minio/mc-config.json
+    - docker-compose.minio.yaml
+global_files: []
+removal_actions: []

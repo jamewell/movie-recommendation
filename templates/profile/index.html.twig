@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4 text-center">
+            <div class="card p-3 shadow-sm">
+                <img
+                    src="{{ aws_endpoint ~ '/profile-pictures/' ~ user.profilePicture ?: asset('images/blank-profile-picture.jpg') }}"
+                    alt="Profile Picture"
+                    class="rounded-circle mb-3"
+                    width="200"
+                    height="200"
+                    style="margin-left: 60px;"
+                >
+                <h4>{{ user.firstName ?: 'First name' }} {{ user.lastName ?: 'Last name' }}</h4>
+
+                <a href="{{ path('app_profile_edit') }}" class="btn btn-outline-primary mt-3">
+                    Edit Profile
+                </a>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card p-3 shadow-sm">
+                <h5 class="text-muted">Favorite Genres</h5>
+
+                {% if user.favoriteGenres is not empty %}
+                    <ul class="list-group">
+                        {% for genre in user.favoriteGenres %}
+                            <li class="list-group-item">{{ genre }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No favorite genres</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
