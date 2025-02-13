@@ -48,6 +48,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $profilePicture = null;
 
+    /**
+     * @var array<string> $favoriteGenres
+     */
     #[ORM\Column(type: 'json', nullable: false)]
     private array $favoriteGenres = [];
 
@@ -168,15 +171,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->profilePicture = $profilePicture;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getFavoriteGenres(): array
     {
         return $this->favoriteGenres;
     }
 
+    /**
+     * @param array<string> $favoriteGenres
+     */
     public function setFavoriteGenres(array $favoriteGenres): void
     {
         $this->favoriteGenres = $favoriteGenres;
     }
-
-
 }

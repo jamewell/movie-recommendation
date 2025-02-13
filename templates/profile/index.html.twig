@@ -7,15 +7,14 @@
     <div class="row">
         <div class="col-md-4 text-center">
             <div class="card p-3 shadow-sm">
-                {% if user.profilePicture is not null %}
                 <img
-                    src="{{ user.profilePicture }}"
+                    src="{{ aws_endpoint ~ '/profile-pictures/' ~ user.profilePicture ?: asset('images/blank-profile-picture.jpg') }}"
                     alt="Profile Picture"
                     class="rounded-circle mb-3"
                     width="200"
                     height="200"
+                    style="margin-left: 60px;"
                 >
-                {% endif %}
                 <h4>{{ user.firstName ?: 'First name' }} {{ user.lastName ?: 'Last name' }}</h4>
 
                 <a href="{{ path('app_profile_edit') }}" class="btn btn-outline-primary mt-3">

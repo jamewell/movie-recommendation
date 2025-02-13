@@ -2,29 +2,39 @@
 
 namespace App\Service;
 
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\FilesystemOperator;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 class FileUploader
 {
     public function __construct(
-        private readonly string $targetDirectory,
-        private readonly SluggerInterface $slugger,
+        private readonly FilesystemOperator $profileStorage,
     ) {
     }
 
-    public function upload(UploadedFile $file): string
+    /**
+     * @throws FilesystemException
+     */
+    public function uploadProfilePicture(UploadedFile $file, string $userId): string
     {
-        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-        $safeFilename = $this->slugger->slug($originalFilename);
-        $fileName = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+        return $this->uploadFile($this->profileStorage, $file, $userId);
+    }
 
-        try {
-            $file->move($this->targetDirectory, $fileName);
-        } catch (FileException $e) {
-            throw new FileException(sprintf('File upload error: %s', $e->getMessage()), $e->getCode(), $e);
+    /**
+     * @throws FilesystemException
+     */
+    private function uploadFile(FilesystemOperator $storage, UploadedFile $file, string $prefix): string
+    {
+        $fileName = sprintf('%s.%s', $prefix, $file->guessExtension());
+        $stream = fopen($file->getPathname(), 'r');
+
+        if (!$stream) {
+            throw new \RuntimeException('Unable to open file.');
         }
+
+        $storage->writeStream($fileName, $stream);
+        fclose($stream);
 
         return $fileName;
     }

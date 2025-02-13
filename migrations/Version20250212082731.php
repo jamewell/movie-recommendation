@@ -20,6 +20,5 @@ final class Version20250212082731 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql('UPDATE user SET favorite_genres = "[]" WHERE favorite_genres IS NULL');
-
     }
 }

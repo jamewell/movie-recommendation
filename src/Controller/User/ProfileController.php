@@ -6,7 +6,9 @@ use App\Entity\User;
 use App\Form\User\ProfileEditFormType;
 use App\Repository\UserRepository;
 use App\Service\FileUploader;
+use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -41,7 +43,11 @@ final class ProfileController extends AbstractController
             $profilePicture = $form->get('profilePicture')->getData();
 
             if ($profilePicture) {
-                $pictureFilename = $fileUploader->upload($profilePicture);
+                try {
+                    $pictureFilename = $fileUploader->uploadProfilePicture($profilePicture, (string) $user->getId());
+                } catch (FilesystemException $e) {
+                    throw new RuntimeException('Follow error occurred uploading image: '.$e->getMessage());
+                }
                 $user->setProfilePicture($pictureFilename);
             }
 

@@ -1,0 +1,9 @@
+flysystem:
+  storages:
+    profile.storage:
+      adapter: 'aws'
+      options:
+        client: 'aws_client_service'
+        bucket: '%env(AWS_PROFILE_BUCKET)%'
+#        prefix: 'profile-pictures'
+        streamReads: true
