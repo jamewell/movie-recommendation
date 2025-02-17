@@ -47,6 +47,11 @@ class FetchGenresCommand extends Command
             }
 
             foreach ($genres as $genre) {
+                if (!$this->validGenre($genre)) {
+                    $output->writeln('<error>Invalid genre data.</error>');
+                    continue;
+                }
+
                 $existingGenre = $this->genreRepository->findByName($genre['name']);
 
                 if ($existingGenre) {
@@ -66,5 +71,13 @@ class FetchGenresCommand extends Command
         }
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * @param array<string,mixed> $genre
+     */
+    private function validGenre(array $genre): bool
+    {
+        return isset($genre['id'], $genre['name']);
     }
 }
