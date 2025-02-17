@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Movie;
 
 use http\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -11,19 +12,13 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class TmdbApiService
+class FetchGenreService extends TmdbApiService
 {
-    private string $apiKey;
-
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
-        private readonly ContainerBagInterface $params,
+        protected readonly HttpClientInterface $httpClient,
+        protected readonly ContainerBagInterface $params,
     ) {
-        try {
-            $this->apiKey = $this->params->get('tmdb_api_key');
-        } catch (\Throwable $exception) {
-            throw new RuntimeException('TMDB API key is missing: '.$exception->getMessage());
-        }
+        parent::__construct($httpClient, $params);
     }
 
     /**
@@ -42,6 +37,14 @@ class TmdbApiService
                 'api_key' => $this->apiKey,
             ],
         ]);
+
+        if (Response::HTTP_OK !== $response->getStatusCode()) {
+            throw new RuntimeException('Failed to fetch genres. Status code: '.$response->getStatusCode());
+        }
+
+        if (!isset($response->toArray()['genres'])) {
+            throw new RuntimeException('Failed to fetch genres. Invalid response.');
+        }
 
         return $response->toArray()['genres'] ?? null;
     }

@@ -5,7 +5,7 @@ namespace App\Tests\Unit\Command;
 use App\Command\FetchGenresCommand;
 use App\Entity\Genre;
 use App\Repository\GenreRepository;
-use App\Service\TmdbApiService;
+use App\Service\Movie\FetchGenreService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
@@ -15,11 +15,11 @@ class FetchGenresCommandTest extends TestCase
 {
     public function testExecuteSuccess(): void
     {
-        $tmdbApiService = $this->createTmdbApiServiceMock();
+        $fetchGenreService = $this->createFetchGenreServiceMock();
         $genreRepository = $this->createGenreRepositoryMock();
-        $commandTester = $this->createCommandTester($tmdbApiService, $genreRepository);
+        $commandTester = $this->createCommandTester($fetchGenreService, $genreRepository);
 
-        $tmdbApiService
+        $fetchGenreService
             ->expects($this->once())
             ->method('fetchGenres')
             ->willReturn([
@@ -41,11 +41,11 @@ class FetchGenresCommandTest extends TestCase
 
     public function testExecuteNoGenres(): void
     {
-        $tmdbApiService = $this->createTmdbApiServiceMock();
+        $fetchGenreService = $this->createFetchGenreServiceMock();
         $genreRepository = $this->createGenreRepositoryMock();
-        $commandTester = $this->createCommandTester($tmdbApiService, $genreRepository);
+        $commandTester = $this->createCommandTester($fetchGenreService, $genreRepository);
 
-        $tmdbApiService
+        $fetchGenreService
             ->expects($this->once())
             ->method('fetchGenres')
             ->willReturn(null);
@@ -59,11 +59,11 @@ class FetchGenresCommandTest extends TestCase
 
     public function testExecuteGenreExists(): void
     {
-        $tmdbApiService = $this->createTmdbApiServiceMock();
+        $fetchGenreService = $this->createFetchGenreServiceMock();
         $genreRepository = $this->createGenreRepositoryMock();
-        $commandTester = $this->createCommandTester($tmdbApiService, $genreRepository);
+        $commandTester = $this->createCommandTester($fetchGenreService, $genreRepository);
 
-        $tmdbApiService
+        $fetchGenreService
             ->expects($this->once())
             ->method('fetchGenres')
             ->willReturn([
@@ -85,11 +85,11 @@ class FetchGenresCommandTest extends TestCase
 
     public function testExecuteInvalidGenreData(): void
     {
-        $tmdbApiService = $this->createTmdbApiServiceMock();
+        $fetchGenreService = $this->createFetchGenreServiceMock();
         $genreRepository = $this->createGenreRepositoryMock();
-        $commandTester = $this->createCommandTester($tmdbApiService, $genreRepository);
+        $commandTester = $this->createCommandTester($fetchGenreService, $genreRepository);
 
-        $tmdbApiService
+        $fetchGenreService
             ->expects($this->once())
             ->method('fetchGenres')
             ->willReturn([
@@ -106,11 +106,11 @@ class FetchGenresCommandTest extends TestCase
 
     public function testExecuteException(): void
     {
-        $tmdbApiService = $this->createTmdbApiServiceMock();
+        $fetchGenreService = $this->createFetchGenreServiceMock();
         $genreRepository = $this->createGenreRepositoryMock();
-        $commandTester = $this->createCommandTester($tmdbApiService, $genreRepository);
+        $commandTester = $this->createCommandTester($fetchGenreService, $genreRepository);
 
-        $tmdbApiService
+        $fetchGenreService
             ->expects($this->once())
             ->method('fetchGenres')
             ->willThrowException(new \Exception('An error occurred.'));
@@ -122,9 +122,9 @@ class FetchGenresCommandTest extends TestCase
         $this->assertStringContainsString('An error occurred.', $output);
     }
 
-    private function createTmdbApiServiceMock(): TmdbApiService&MockObject
+    private function createFetchGenreServiceMock(): FetchGenreService&MockObject
     {
-        return $this->createMock(TmdbApiService::class);
+        return $this->createMock(FetchGenreService::class);
     }
 
     private function createGenreRepositoryMock(): GenreRepository&MockObject
@@ -132,10 +132,10 @@ class FetchGenresCommandTest extends TestCase
         return $this->createMock(GenreRepository::class);
     }
 
-    private function createCommandTester(TmdbApiService $tmdbApiService, GenreRepository $genreRepository): CommandTester
+    private function createCommandTester(FetchGenreService $fetchGenreService, GenreRepository $genreRepository): CommandTester
     {
         $application = new Application();
-        $application->add(new FetchGenresCommand($tmdbApiService, $genreRepository));
+        $application->add(new FetchGenresCommand($fetchGenreService, $genreRepository));
 
         $command = $application->find('app:fetch-genres');
 

@@ -4,7 +4,7 @@ namespace App\Command;
 
 use App\Entity\Genre;
 use App\Repository\GenreRepository;
-use App\Service\TmdbApiService;
+use App\Service\Movie\FetchGenreService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class FetchGenresCommand extends Command
 {
     public function __construct(
-        private readonly TmdbApiService $tmdbApiService,
+        private readonly FetchGenreService $fetchGenreService,
         private readonly GenreRepository $genreRepository,
     ) {
         parent::__construct();
@@ -38,7 +38,7 @@ class FetchGenresCommand extends Command
         $output->writeln('Fetching genres...');
 
         try {
-            $genres = $this->tmdbApiService->fetchGenres();
+            $genres = $this->fetchGenreService->fetchGenres();
 
             if (!$genres) {
                 $output->writeln('<error>No genres found.</error>');
