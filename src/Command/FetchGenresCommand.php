@@ -38,7 +38,7 @@ class FetchGenresCommand extends Command
         $output->writeln('Fetching genres...');
 
         try {
-            $genres = $this->fetchGenreService->fetchGenres();
+            $genres = $this->fetchGenreService->execute();
 
             if (!$genres) {
                 $output->writeln('<error>No genres found.</error>');

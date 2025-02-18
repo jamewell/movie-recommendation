@@ -21,7 +21,7 @@ class FetchGenresCommandTest extends TestCase
 
         $fetchGenreService
             ->expects($this->once())
-            ->method('fetchGenres')
+            ->method('execute')
             ->willReturn([
                 ['id' => 1, 'name' => 'Action'],
                 ['id' => 2, 'name' => 'Comedy'],
@@ -47,7 +47,7 @@ class FetchGenresCommandTest extends TestCase
 
         $fetchGenreService
             ->expects($this->once())
-            ->method('fetchGenres')
+            ->method('execute')
             ->willReturn(null);
 
         $commandTester->execute([]);
@@ -65,7 +65,7 @@ class FetchGenresCommandTest extends TestCase
 
         $fetchGenreService
             ->expects($this->once())
-            ->method('fetchGenres')
+            ->method('execute')
             ->willReturn([
                 ['id' => 1, 'name' => 'Action'],
             ]);
@@ -91,7 +91,7 @@ class FetchGenresCommandTest extends TestCase
 
         $fetchGenreService
             ->expects($this->once())
-            ->method('fetchGenres')
+            ->method('execute')
             ->willReturn([
                 ['id' => 1],
                 ['name' => 'Action'],
@@ -112,7 +112,7 @@ class FetchGenresCommandTest extends TestCase
 
         $fetchGenreService
             ->expects($this->once())
-            ->method('fetchGenres')
+            ->method('execute')
             ->willThrowException(new \Exception('An error occurred.'));
 
         $commandTester->execute([]);

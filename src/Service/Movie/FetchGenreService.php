@@ -2,9 +2,9 @@
 
 namespace App\Service\Movie;
 
-use http\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -15,14 +15,14 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class FetchGenreService extends TmdbApiService
 {
     public function __construct(
-        protected readonly HttpClientInterface $httpClient,
-        protected readonly ContainerBagInterface $params,
+        protected HttpClientInterface $httpClient,
+        protected ContainerBagInterface $params,
     ) {
         parent::__construct($httpClient, $params);
     }
 
     /**
-     * @return ?array<string,array<string,mixed>>
+     * @return ?array<int,array<string,mixed>>
      *
      * @throws TransportExceptionInterface
      * @throws ServerExceptionInterface
@@ -30,7 +30,7 @@ class FetchGenreService extends TmdbApiService
      * @throws DecodingExceptionInterface
      * @throws ClientExceptionInterface
      */
-    public function fetchGenres(): ?array
+    public function execute(): ?array
     {
         $response = $this->httpClient->request('GET', 'https://api.themoviedb.org/3/genre/movie/list', [
             'query' => [
@@ -39,11 +39,7 @@ class FetchGenreService extends TmdbApiService
         ]);
 
         if (Response::HTTP_OK !== $response->getStatusCode()) {
-            throw new RuntimeException('Failed to fetch genres. Status code: '.$response->getStatusCode());
-        }
-
-        if (!isset($response->toArray()['genres'])) {
-            throw new RuntimeException('Failed to fetch genres. Invalid response.');
+            throw new HttpException($response->getStatusCode(), 'Failed to fetch genres.');
         }
 
         return $response->toArray()['genres'] ?? null;
