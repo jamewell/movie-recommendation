@@ -35,3 +35,13 @@ services:
                 credentials:
                     key: '%env(AWS_ACCESS_KEY_ID)%'
                     secret: '%env(AWS_SECRET_ACCESS_KEY)%'
+
+    App\Service\Movie\TmdbApiService:
+        arguments:
+            $apiKey: '%tmdb_api_key%'
+    App\Service\Movie\FetchGenreService:
+        arguments:
+            $apiKey: '%tmdb_api_key%'
+    App\Service\Movie\FetchMoviesByGenreService:
+        arguments:
+            $apiKey: '%tmdb_api_key%'
