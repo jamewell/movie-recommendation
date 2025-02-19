@@ -8,6 +8,14 @@ framework:
     #esi: true
     #fragments: true
 
+    #http-client
+#    http-client:
+#        scoped_clients:
+#            tmdb_api:
+#                base_uri: 'https://api.themoviedb.org/3'
+#                query:
+#                    api_key: '%env(TMDB_API_KEY)%'
+
 when@test:
     framework:
         test: true

@@ -29,7 +29,7 @@
                 {% if user.favoriteGenres is not empty %}
                     <ul class="list-group">
                         {% for genre in user.favoriteGenres %}
-                            <li class="list-group-item">{{ genre }}</li>
+                            <li class="list-group-item">{{ genre.name }}</li>
                         {% endfor %}
                     </ul>
                 {% else %}
