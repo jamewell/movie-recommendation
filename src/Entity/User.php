@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -49,10 +51,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $profilePicture = null;
 
     /**
-     * @var array<string> $favoriteGenres
+     * @var Collection<int, Genre> $favoriteGenres
      */
-    #[ORM\Column(type: 'json', nullable: false)]
-    private array $favoriteGenres = [];
+    #[ORM\ManyToMany(targetEntity: Genre::class)]
+    #[ORM\JoinTable(name: 'user_favorite_genres')]
+    private Collection $favoriteGenres;
+
+    public function __construct()
+    {
+        $this->favoriteGenres = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -172,18 +180,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return array<string>
+     * @return Collection<int, Genre>
      */
-    public function getFavoriteGenres(): array
+    public function getFavoriteGenres(): Collection
     {
         return $this->favoriteGenres;
     }
 
-    /**
-     * @param array<string> $favoriteGenres
-     */
-    public function setFavoriteGenres(array $favoriteGenres): void
+    public function addFavoriteGenres(Genre $genre): self
     {
-        $this->favoriteGenres = $favoriteGenres;
+        if (!$this->favoriteGenres->contains($genre)) {
+            $this->favoriteGenres->add($genre);
+        }
+
+        return $this;
+    }
+
+    public function removeFavoriteGenres(Genre $genre): self
+    {
+        $this->favoriteGenres->removeElement($genre);
+
+        return $this;
     }
 }

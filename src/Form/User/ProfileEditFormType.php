@@ -2,7 +2,9 @@
 
 namespace App\Form\User;
 
+use App\Entity\Genre;
 use App\Validator\Constraints\ImageConstraint;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -28,14 +30,23 @@ class ProfileEditFormType extends AbstractType
             ->add('profilePicture', FileType::class, [
                 'label' => 'Profile Picture',
                 'required' => false,
+                'data_class' => null,
                 'attr' => [
                     'class' => 'form-control',
                 ],
                 'constraints' => [
                     new ImageConstraint(),
                 ],
-            ]);
-
-        //        TODO: add list for genres
+            ])
+            ->add('favoriteGenres', EntityType::class, [
+                'class' => Genre::class,
+                'choice_label' => 'name',
+                'multiple' => true,
+                'expanded' => true,
+                'attr' => [
+                    'class' => 'form-check-input',
+                ],
+            ])
+        ;
     }
 }

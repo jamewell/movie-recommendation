@@ -41,6 +41,7 @@ final class ProfileController extends AbstractController
             $firstName = $form->get('firstName')->getData();
             $lastName = $form->get('lastName')->getData();
             $profilePicture = $form->get('profilePicture')->getData();
+            $favoriteGenres = $form->get('favoriteGenres')->getData();
 
             if ($profilePicture) {
                 try {
@@ -49,6 +50,12 @@ final class ProfileController extends AbstractController
                     throw new RuntimeException('Follow error occurred uploading image: '.$e->getMessage());
                 }
                 $user->setProfilePicture($pictureFilename);
+            }
+
+            if ($favoriteGenres) {
+                foreach ($favoriteGenres as $genre) {
+                    $user->addFavoriteGenres($genre);
+                }
             }
 
             $user->setFirstName($firstName);
