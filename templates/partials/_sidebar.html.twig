@@ -1,0 +1,17 @@
+<nav class="sidebar">
+    <div class="user-info mb-3">
+        <p>Welcome, <strong>{{ app.user.firstName }}</strong>!</p>
+    </div>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a href="{{ path('app_profile') }}" class="nav-link">
+                Profile
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ path('app_movie_recommendation') }}" class="nav-link">
+                Movie Recommendations
+            </a>
+        </li>
+    </ul>
+</nav>

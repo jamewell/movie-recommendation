@@ -5,19 +5,6 @@ namespace App\Data\Movie;
 class MovieData
 {
     /**
-     * @param int $id
-     * @param string $title
-     * @param string|null $posterPath
-     * @param string|null $releaseDate
-     * @param string|null $overview
-     * @param bool $adult
-     * @param string|null $backdropPath
-     * @param string $originalLanguage
-     * @param string $originalTitle
-     * @param int $popularity
-     * @param float $voteAverage
-     * @param int $voteCount
-     * @param bool $video
      * @param array<int> $genreIds
      */
     public function __construct(
