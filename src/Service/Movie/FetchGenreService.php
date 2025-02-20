@@ -54,6 +54,7 @@ class FetchGenreService extends TmdbApiService
                 $this->logger->warning('Invalid API response: missing "genres" key.', [
                     'response' => $data,
                 ]);
+
                 return null;
             }
 

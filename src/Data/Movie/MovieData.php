@@ -4,6 +4,22 @@ namespace App\Data\Movie;
 
 class MovieData
 {
+    /**
+     * @param int $id
+     * @param string $title
+     * @param string|null $posterPath
+     * @param string|null $releaseDate
+     * @param string|null $overview
+     * @param bool $adult
+     * @param string|null $backdropPath
+     * @param string $originalLanguage
+     * @param string $originalTitle
+     * @param int $popularity
+     * @param float $voteAverage
+     * @param int $voteCount
+     * @param bool $video
+     * @param array<int> $genreIds
+     */
     public function __construct(
         private readonly int $id,
         private readonly string $title,
@@ -22,6 +38,9 @@ class MovieData
     ) {
     }
 
+    /**
+     * @param array<string,mixed> $data
+     */
     public static function fromArray(array $data): self
     {
         if (!isset($data['id'], $data['title'])) {
@@ -111,6 +130,9 @@ class MovieData
         return $this->video;
     }
 
+    /**
+     * @return array<int>
+     */
     public function getGenreIds(): array
     {
         return $this->genreIds;
