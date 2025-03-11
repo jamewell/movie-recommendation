@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Tests\Unit\Service;
+namespace App\Tests\Unit\Service\Movie;
 
 use App\Service\Movie\FetchGenreService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
@@ -21,13 +22,12 @@ class FetchGenreServiceTest extends TestCase
         $response = $this->createResponseMock();
         $fetchGenreService = $this->createFetchGenreService(
             $httpClient,
-            self::API_KEY,
             $logger,
         );
 
         $response
             ->method('getStatusCode')
-            ->willReturn(200);
+            ->willReturn(Response::HTTP_OK);
 
         $response
             ->method('toArray')
@@ -57,7 +57,6 @@ class FetchGenreServiceTest extends TestCase
         $response = $this->createResponseMock();
         $fetchGenreService = $this->createFetchGenreService(
             $httpClient,
-            self::API_KEY,
             $logger,
         );
 
@@ -80,7 +79,6 @@ class FetchGenreServiceTest extends TestCase
         $response = $this->createResponseMock();
         $fetchGenreService = $this->createFetchGenreService(
             $httpClient,
-            self::API_KEY,
             $logger,
         );
 
@@ -108,7 +106,6 @@ class FetchGenreServiceTest extends TestCase
         $logger = $this->createLoggerMock();
         $fetchGenreService = $this->createFetchGenreService(
             $httpClient,
-            self::API_KEY,
             $logger,
         );
 
@@ -117,10 +114,9 @@ class FetchGenreServiceTest extends TestCase
 
     private function createFetchGenreService(
         HttpClientInterface $httpClient,
-        string $api_key,
         LoggerInterface $logger,
     ): FetchGenreService {
-        return new FetchGenreService($httpClient, $api_key, $logger);
+        return new FetchGenreService($httpClient, self::API_KEY, $logger);
     }
 
     private function createHttpClientMock(): HttpClientInterface&MockObject
