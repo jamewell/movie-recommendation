@@ -50,7 +50,7 @@ class FetchMoviesByGenreService extends TmdbApiService
             $response = $this->httpClient->request('GET', $this->getApiUrl(self::DISCOVER_MOVIE_ENDPOINT), [
                 'query' => [
                     'api_key' => $this->apiKey,
-                    'with_genres' => implode(',', $genreIds),
+                    'with_genres' => implode('|', $genreIds),
                     'page' => $page,
                 ],
             ]);

@@ -35,7 +35,7 @@ class MovieRecommendationService
      * @throws TransportExceptionInterface
      * @throws InvalidArgumentException
      */
-    public function getRecommendations(User $user, int $maxMovies = 10): array
+    public function getRecommendations(User $user, int $maxMovies = 12): array
     {
         if ($maxMovies < 1) {
             throw new \InvalidArgumentException('Max movies must be greater than 0.');
@@ -44,28 +44,38 @@ class MovieRecommendationService
         $cacheKey = self::CACHE_KEY_BASE.$user->getId();
 
         return $this->cache->get($cacheKey, function (ItemInterface $item) use ($user, $maxMovies) {
-            $item->expiresAfter(3600 * 6);
+            $item->expiresAfter(3600);
 
             $favoriteGenres = $user->getFavoriteGenres();
-            if (0 === count($favoriteGenres)) {
+            if ($favoriteGenres->isEmpty()) {
+                $this->logger->info('User has no favorite genres.', ['user_id' => $user->getId()]);
+
                 return [];
             }
 
-            $recommendedMovies = [];
-            foreach ($favoriteGenres as $genre) {
-                array_push($recommendedMovies, ...$this->service->execute([$genre->getTmdbId()]));
+            $genreIds = $favoriteGenres->map(fn ($genre) => $genre->getTmdbId())->toArray();
+
+            try {
+                $page = rand(1, 10);
+                $recommendedMovies = $this->service->execute($genreIds, $page);
+            } catch (\Throwable $e) {
+                $this->logger->error('Failed to fetch recommended movies.', [
+                    'user_id' => $user->getId(),
+                    'error' => $e->getMessage(),
+                ]);
+
+                return [];
             }
 
-            $uniqueMovies = [];
-            foreach ($recommendedMovies as $movie) {
-                $uniqueMovies[$movie->getId()] = $movie;
-            }
-            $uniqueMovies = array_values($uniqueMovies);
+            $uniqueMovies = $this->removeDuplicateMovies($recommendedMovies);
 
             return array_slice($uniqueMovies, 0, $maxMovies);
         });
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function clearCache(User $user): void
     {
         try {
@@ -75,6 +85,20 @@ class MovieRecommendationService
                 'user_id' => $user->getId(),
                 'error' => $e->getMessage(),
             ]);
+
+            throw $e;
         }
+    }
+
+    private function removeDuplicateMovies(array $movies): array
+    {
+        $uniqueMovies = [];
+        foreach ($movies as $movie) {
+            if ($movie instanceof MovieData) {
+                $uniqueMovies[$movie->getId()] = $movie;
+            }
+        }
+
+        return array_values($uniqueMovies);
     }
 }
