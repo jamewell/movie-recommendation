@@ -2,21 +2,24 @@
 
 namespace App\Service\Movie;
 
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 abstract class TmdbApiService
 {
-    protected string $apiKey;
-
     public function __construct(
         protected HttpClientInterface $httpClient,
-        protected ContainerBagInterface $params,
+        protected string $apiKey,
+        protected LoggerInterface $logger,
+        protected string $baseUrl = 'https://api.themoviedb.org/3/',
     ) {
-        try {
-            $this->apiKey = $this->params->get('tmdb_api_key');
-        } catch (\Throwable $exception) {
-            throw new \RuntimeException('TMDB API key is missing: '.$exception->getMessage());
+        if (empty($apiKey)) {
+            throw new \RuntimeException('TMDB API key is empty or not configured.');
         }
+    }
+
+    protected function getApiUrl(string $endpoint): string
+    {
+        return $this->baseUrl.$endpoint;
     }
 }

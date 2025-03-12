@@ -1,27 +1,33 @@
 <?php
 
-namespace App\Tests\Unit\Service;
+namespace App\Tests\Unit\Service\Movie;
 
 use App\Service\Movie\FetchGenreService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class FetchGenreServiceTest extends TestCase
 {
+    private const API_KEY = 'test_api_key';
+
     public function testFetchGenres(): void
     {
         $httpClient = $this->createHttpClientMock();
-        $param = $this->createContainerBagMock();
+        $logger = $this->createLoggerMock();
         $response = $this->createResponseMock();
-        $fetchGenreService = $this->createFetchGenreService($httpClient, $param);
+        $fetchGenreService = $this->createFetchGenreService(
+            $httpClient,
+            $logger,
+        );
 
         $response
             ->method('getStatusCode')
-            ->willReturn(200);
+            ->willReturn(Response::HTTP_OK);
 
         $response
             ->method('toArray')
@@ -44,12 +50,15 @@ class FetchGenreServiceTest extends TestCase
         $this->assertSame('Comedy', $genres[1]['name']);
     }
 
-    public function testFetchGenresFailed(): void
+    public function testExceptionThrowDueToInvalidStatusCode(): void
     {
         $httpClient = $this->createHttpClientMock();
-        $param = $this->createContainerBagMock();
+        $logger = $this->createLoggerMock();
         $response = $this->createResponseMock();
-        $fetchGenreService = $this->createFetchGenreService($httpClient, $param);
+        $fetchGenreService = $this->createFetchGenreService(
+            $httpClient,
+            $logger,
+        );
 
         $response
             ->method('getStatusCode')
@@ -66,9 +75,12 @@ class FetchGenreServiceTest extends TestCase
     public function testFetchGenresReturnsNull(): void
     {
         $httpClient = $this->createHttpClientMock();
-        $param = $this->createContainerBagMock();
+        $logger = $this->createLoggerMock();
         $response = $this->createResponseMock();
-        $fetchGenreService = $this->createFetchGenreService($httpClient, $param);
+        $fetchGenreService = $this->createFetchGenreService(
+            $httpClient,
+            $logger,
+        );
 
         $response
             ->method('getStatusCode')
@@ -88,18 +100,23 @@ class FetchGenreServiceTest extends TestCase
     public function testConstructorThrowsException(): void
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('TMDB API key is missing: No tmdb_api_key found.');
+        $this->expectExceptionMessage('Failed to fetch genres.');
 
         $httpClient = $this->createHttpClientMock();
-        $param = $this->createContainerBagMockWithException();
-        $fetchGenreService = $this->createFetchGenreService($httpClient, $param);
+        $logger = $this->createLoggerMock();
+        $fetchGenreService = $this->createFetchGenreService(
+            $httpClient,
+            $logger,
+        );
 
         $fetchGenreService->execute();
     }
 
-    private function createFetchGenreService(HttpClientInterface $httpClient, ContainerBagInterface $param): FetchGenreService
-    {
-        return new FetchGenreService($httpClient, $param);
+    private function createFetchGenreService(
+        HttpClientInterface $httpClient,
+        LoggerInterface $logger,
+    ): FetchGenreService {
+        return new FetchGenreService($httpClient, self::API_KEY, $logger);
     }
 
     private function createHttpClientMock(): HttpClientInterface&MockObject
@@ -114,28 +131,9 @@ class FetchGenreServiceTest extends TestCase
             ->getMock();
     }
 
-    private function createContainerBagMock(): ContainerBagInterface&MockObject
+    private function createLoggerMock(): LoggerInterface&MockObject
     {
-        $param = $this->getMockBuilder(ContainerBagInterface::class)
+        return $this->getMockBuilder(LoggerInterface::class)
             ->getMock();
-        $param
-            ->expects($this->once())
-            ->method('get')
-            ->with('tmdb_api_key')
-            ->willReturn('test_api_key');
-
-        return $param;
-    }
-
-    private function createContainerBagMockWithException(): ContainerBagInterface&MockObject
-    {
-        $param = $this->getMockBuilder(ContainerBagInterface::class)
-            ->getMock();
-        $param
-            ->expects($this->once())
-            ->method('get')
-            ->willThrowException(new \RuntimeException('No tmdb_api_key found.'));
-
-        return $param;
     }
 }

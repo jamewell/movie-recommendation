@@ -8,3 +8,20 @@ body {
     padding: 15px;
     margin: auto;
 }
+
+.sidebar {
+    background-color: #93c5fd;
+    padding: 20px;
+    height: 100vh;
+    border-right: 1px solid #2563EB;
+}
+
+.sidebar .nav-link {
+    color: white;
+    padding: 10px 15px;
+    border-radius: 4px;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #3b82f6;
+}
