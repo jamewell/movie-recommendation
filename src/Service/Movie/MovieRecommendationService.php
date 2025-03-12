@@ -39,7 +39,7 @@ class MovieRecommendationService
 
         $recommendedMovies = [];
         foreach ($favoriteGenres as $genre) {
-            array_push($recommendedMovies, ...$this->service->execute([$genre->getId()]));
+            array_push($recommendedMovies, ...$this->service->execute([$genre->getTmdbId()]));
         }
 
         $uniqueMovies = [];
