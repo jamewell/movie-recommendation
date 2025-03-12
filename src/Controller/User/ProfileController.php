@@ -5,6 +5,7 @@ namespace App\Controller\User;
 use App\Entity\User;
 use App\Form\User\ProfileEditFormType;
 use App\Repository\UserRepository;
+use App\Service\Movie\MovieRecommendationService;
 use App\Service\Utility\FileUploader;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,6 +18,7 @@ final class ProfileController extends AbstractController
 {
     public function __construct(
         private readonly UserRepository $userRepository,
+        private readonly MovieRecommendationService $movieRecommendationService,
     ) {
     }
 
@@ -62,6 +64,8 @@ final class ProfileController extends AbstractController
             $user->setLastName($lastName);
 
             $this->userRepository->updateUser($user);
+
+            $this->movieRecommendationService->clearCache($user);
 
             return $this->redirectToRoute('app_profile');
         }

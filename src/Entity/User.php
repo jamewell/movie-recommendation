@@ -195,11 +195,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
-    public function removeFavoriteGenres(Genre $genre): self
-    {
-        $this->favoriteGenres->removeElement($genre);
-
-        return $this;
-    }
 }
