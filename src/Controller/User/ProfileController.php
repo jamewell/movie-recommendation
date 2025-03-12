@@ -5,7 +5,7 @@ namespace App\Controller\User;
 use App\Entity\User;
 use App\Form\User\ProfileEditFormType;
 use App\Repository\UserRepository;
-use App\Service\FileUploader;
+use App\Service\Utility\FileUploader;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
