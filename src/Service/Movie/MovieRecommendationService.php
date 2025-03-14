@@ -17,6 +17,7 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 class MovieRecommendationService
 {
     public const CACHE_KEY_BASE = 'movie_recommendation_user_';
+    public const EXPIRATION_TIME = 3600;
 
     public function __construct(
         private readonly FetchMoviesByGenreService $service,
@@ -44,7 +45,7 @@ class MovieRecommendationService
         $cacheKey = self::CACHE_KEY_BASE.$user->getId();
 
         return $this->cache->get($cacheKey, function (ItemInterface $item) use ($user, $maxMovies) {
-            $item->expiresAfter(3600);
+            $item->expiresAfter(self::EXPIRATION_TIME);
 
             $favoriteGenres = $user->getFavoriteGenres();
             if ($favoriteGenres->isEmpty()) {
@@ -90,13 +91,16 @@ class MovieRecommendationService
         }
     }
 
+    /**
+     * @param array<MovieData> $movies
+     *
+     * @return array<int, MovieData>
+     */
     private function removeDuplicateMovies(array $movies): array
     {
         $uniqueMovies = [];
         foreach ($movies as $movie) {
-            if ($movie instanceof MovieData) {
-                $uniqueMovies[$movie->getId()] = $movie;
-            }
+            $uniqueMovies[$movie->getId()] = $movie;
         }
 
         return array_values($uniqueMovies);
