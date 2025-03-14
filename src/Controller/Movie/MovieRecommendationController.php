@@ -26,7 +26,7 @@ final class MovieRecommendationController extends AbstractController
         $user = $this->getUser();
 
         try {
-            $recommendedMovies = $movieRecommendationService->execute($user);
+            $recommendedMovies = $movieRecommendationService->getRecommendations($user);
 
             return $this->render('movie_recommendation/index.html.twig', [
                 'movies' => $recommendedMovies,

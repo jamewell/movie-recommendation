@@ -5,8 +5,10 @@ namespace App\Controller\User;
 use App\Entity\User;
 use App\Form\User\ProfileEditFormType;
 use App\Repository\UserRepository;
+use App\Service\Movie\MovieRecommendationService;
 use App\Service\Utility\FileUploader;
 use League\Flysystem\FilesystemException;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +19,7 @@ final class ProfileController extends AbstractController
 {
     public function __construct(
         private readonly UserRepository $userRepository,
+        private readonly MovieRecommendationService $movieRecommendationService,
     ) {
     }
 
@@ -29,6 +32,9 @@ final class ProfileController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     #[Route('profile/edit', name: 'app_profile_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, FileUploader $fileUploader): Response
     {
@@ -62,6 +68,8 @@ final class ProfileController extends AbstractController
             $user->setLastName($lastName);
 
             $this->userRepository->updateUser($user);
+
+            $this->movieRecommendationService->clearCache($user);
 
             return $this->redirectToRoute('app_profile');
         }
