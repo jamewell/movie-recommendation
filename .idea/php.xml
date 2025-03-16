@@ -188,6 +188,12 @@
       <path value="$PROJECT_DIR$/vendor/psr/http-message" />
       <path value="$PROJECT_DIR$/vendor/psr/http-client" />
       <path value="$PROJECT_DIR$/vendor/league/flysystem-bundle" />
+      <path value="$PROJECT_DIR$/vendor/brainmaestro/composer-git-hooks" />
+      <path value="$PROJECT_DIR$/vendor/sebastianfeldmann/camino" />
+      <path value="$PROJECT_DIR$/vendor/sebastianfeldmann/git" />
+      <path value="$PROJECT_DIR$/vendor/sebastianfeldmann/cli" />
+      <path value="$PROJECT_DIR$/vendor/captainhook/secrets" />
+      <path value="$PROJECT_DIR$/vendor/captainhook/captainhook" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

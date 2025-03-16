@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Run PHP CS Fixer (dry-run)
+echo "Running PHP CS Fixer..."
+./vendor/bin/php-cs-fixer fix --dry-run --diff
+if [ $? -ne 0 ]; then
+  echo "PHP CS Fixer found issues. Aborting commit."
+  exit 1
+fi
+
+# Run PHPStan
+echo "Running PHPStan..."
+./vendor/bin/phpstan analyse
+if [ $? -ne 0 ]; then
+  echo "PHPStan found issues. Aborting commit."
+  exit 1
+fi
+
+# Run PHPUnit tests
+echo "Running PHPUnit..."
+./vendor/bin/phpunit
+if [ $? -ne 0 ]; then
+  echo "PHPUnit tests failed. Aborting commit."
+  exit 1
+fi
+
+echo "All checks passed. Proceeding with commit."
+exit 0

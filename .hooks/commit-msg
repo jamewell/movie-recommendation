@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# .hooks/commit-msg
+
+# Enforces conventional commit messages
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+NC='\033[0m' # No Color
+
+# commit headline must be in the correct format
+commit_msg_file=$(git rev-parse --git-dir)/COMMIT_EDITMSG
+
+# Check if the commit message file exists and is not empty
+if [[ ! -f "$commit_msg_file" || ! -s "$commit_msg_file" ]]; then
+    printf "%sAborting. %sCommit message file is missing or empty.%s\n" "$RED" "$YELLOW" "$NC"
+    exit 1
+fi
+
+# Read the commit message from the file
+commit_msg=$(cat "$commit_msg_file")
+
+# Regular expression pattern for conventional commit format
+pattern="^(build|wip|ci|docs|feat|fix|perf|refactor|style|test|chore|revert|release)(\(.+\))?: .{1,}(\\n\\n.*)?$"
+
+# Check if the commit message matches the pattern
+if [[ ! $commit_msg =~ $pattern ]]; then
+    printf "%sAborting. %sYour commit message is invalid.%s\n\n" "$RED" "$YELLOW" "$NC"
+    printf "Syntax:\n"
+    printf "  %s<type>%s(%s<scope>%s): %s<subject>%s\n\n" "$YELLOW" "$NC" "$YELLOW" "$NC" "$YELLOW" "$NC"
+    printf "  %s<type>%s can be one of:\n" "$YELLOW" "$NC"
+    printf "  build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test\n\n"
+    printf "  %s<scope>%s is optional.\n\n" "$YELLOW" "$NC"
+    printf "  %s<subject>%s must describe the change.\n\n" "$YELLOW" "$NC"
+    printf "For more information, see: %shttps://www.conventionalcommits.org/%s\n" "$YELLOW" "$NC"
+    exit 1
+fi
+
+# Success message
+printf "%sCommit message format is valid%s\n" "$GREEN" "$NC"
+exit 0
