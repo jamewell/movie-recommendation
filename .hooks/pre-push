@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Run PHPUnit tests
+echo "Running PHPUnit..."
+./vendor/bin/phpunit
+# shellcheck disable=SC2181
+if [ $? -ne 0 ]; then
+  echo "PHPUnit tests failed. Aborting push."
+  exit 1
+fi
+
+echo "All checks passed. Proceeding with push."
