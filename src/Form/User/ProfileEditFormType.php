@@ -30,6 +30,7 @@ class ProfileEditFormType extends AbstractType
             ->add('profilePicture', FileType::class, [
                 'label' => 'Profile Picture',
                 'required' => false,
+                'mapped' => false,
                 'data_class' => null,
                 'attr' => [
                     'class' => 'form-control',
