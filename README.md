@@ -52,7 +52,6 @@ Before you begin, ensure you have the following installed and configured:
 
 
 ### Testing and Code Quality
-- This section is clear, but you could add a brief explanation of what each tool does for users who may not be familiar with them.
 
 1. **Run PHPUnit tests**: Execute the test suite to ensure the application is functioning as expected.
 ```bash
